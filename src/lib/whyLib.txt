@@ -1,0 +1,1 @@
+It is because, we are using shad cn and while installing it makes a folder called lib and inside which there's a file it makes called as utils 
