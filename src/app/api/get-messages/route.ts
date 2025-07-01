@@ -47,5 +47,15 @@ export async function GET(request: Request) {
       },
       { status: 200 }
     );
-  } catch (error) {}
+  } catch (error) {
+    console.log("An Error Occured ", error);
+
+    return Response.json(
+      {
+        success: false,
+        message: "Error registering user",
+      },
+      { status: 500 }
+    );
+  }
 }
