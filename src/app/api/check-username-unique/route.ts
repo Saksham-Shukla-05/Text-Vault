@@ -45,7 +45,7 @@ export async function GET(request: Request) {
           success: false,
           message: "Username is already taken",
         },
-        { status: 200 }
+        { status: 400 }
       );
     }
 
