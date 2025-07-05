@@ -38,6 +38,8 @@ function DashBoard() {
     setIsSwitchLoading(true);
     try {
       const res = await axios.get<ApiResponse>("/api/accept-messages");
+      console.log("fetchAcceptMessage", res.data.message);
+
       setValue("acceptMessages", res.data.isAcceptingMessage ?? false);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -77,35 +79,36 @@ function DashBoard() {
   }, [session, setValue, fetchAcceptMessage, fetchMessages]);
 
   //handle switch change
-
   const handleSwitchChange = async () => {
     try {
-      const res = await axios.post<ApiResponse>(
-        "/api/accept-messages",
-
-        {
-          acceptMessages: !acceptMessages,
-        }
-      );
-
+      const response = await axios.post<ApiResponse>("/api/accept-messages", {
+        acceptMessage: !acceptMessages,
+      });
       setValue("acceptMessages", !acceptMessages);
-      toast(res.data.message);
+      toast(response.data.message);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      console.log(axiosError);
-      toast("Failed to change messgge setting");
+      toast("Failed to update message settings");
     }
   };
 
   const username = session?.user?.username ?? "";
   // Do more Research
 
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const profileUrl = `${baseUrl}/u/${username}`;
+  const [profileUrl, setProfileUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && username) {
+      const baseUrl = `${window.location.protocol}//${window.location.host}`;
+      setProfileUrl(`${baseUrl}/u/${username}`);
+    }
+  }, [username]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
-    toast.success("Copied to clipboard");
+    if (profileUrl) {
+      navigator.clipboard.writeText(profileUrl);
+      toast.success("Copied to clipboard");
+    }
   };
 
   if (!session || !session.user) {
