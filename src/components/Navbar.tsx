@@ -11,8 +11,8 @@ function Navbar() {
   const user: User = session?.user;
 
   return (
-    <nav className="p-4 md:p-6 shadow-md bg-gray-900 text-white">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+    <nav className="p-4 md:p-6 bg-[#0F0F0F]  shadow-md text-white">
+      <div className="container mx-auto flex flex-row justify-between items-center">
         <a href="#" className="text-xl font-bold mb-4 md:mb-0">
           Text Vault
         </a>
@@ -21,7 +21,7 @@ function Navbar() {
             <span className="mr-4">Welcome, {user.username || user.email}</span>
             <Button
               onClick={() => signOut()}
-              className="w-full md:w-auto bg-slate-100 text-black"
+              className="w-full md:w-auto bg-[#14F195] text-black hover:bg-[#12d48a]"
               variant="outline"
             >
               Logout
@@ -30,7 +30,7 @@ function Navbar() {
         ) : (
           <Link href="/sign-in">
             <Button
-              className="w-full md:w-auto bg-slate-100 text-black"
+              className="w-full md:w-auto bg-[#14F195] text-black hover:bg-[#12d48a]"
               variant={"outline"}
             >
               Login
