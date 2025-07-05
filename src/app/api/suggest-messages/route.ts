@@ -16,10 +16,15 @@ export async function POST(req: Request) {
     const response = await groq.chat.completions.create({
       model: "llama3-8b-8192",
       messages: [{ role: "user", content: prompt }],
-      stream: false, // You can toggle this to true for streaming
+      stream: true, // You can toggle this to true for streaming
     });
 
-    const reply = response.choices[0]?.message?.content ?? "No response";
+    let reply = "";
+    for await (const chunk of response) {
+      const content = chunk.choices?.[0]?.delta?.content;
+      if (content) reply += content;
+    }
+    reply = reply || "No response";
     return NextResponse.json({ reply });
   } catch (error: any) {
     console.error("Error from Groq:", error);
