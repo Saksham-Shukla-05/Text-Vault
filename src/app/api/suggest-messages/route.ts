@@ -10,7 +10,7 @@ const groq = new Groq({
 });
 
 export async function POST(req: Request) {
-  const prompt = `Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What’s a hobby you’ve recently started?||If you could have dinner with any historical figure, who would it be?||What’s a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.`;
+  const prompt = `Output only a single line string containing exactly three open-ended and engaging questions, separated by '||'. Do not include any explanation, prefixes, or formatting — just the questions. These should be universal, friendly, and suitable for anonymous social messaging (like Qooh.me). Avoid sensitive topics. Example format: What inspires you most in life?||What's a small win you recently celebrated?||If you could relive one day, which would it be and why?`;
 
   try {
     const response = await groq.chat.completions.create({
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       if (content) reply += content;
     }
     reply = reply || "No response";
-    return NextResponse.json({ reply });
+    return NextResponse.json({ success: true, reply });
   } catch (error: any) {
     console.error("Error from Groq:", error);
 

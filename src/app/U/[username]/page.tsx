@@ -21,13 +21,12 @@ import { ApiResponse } from "@/types/ApiResponse";
 function User() {
   const [IsSubmitting, setIsSubmitting] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
-
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestedMessage, setSuggestedMessage] = useState([]);
   // Make sure that is the legit way of extracting user and decoding it ?
   const params = useParams();
   const rawUsername = params?.username as string;
   const decodedUsername = decodeURIComponent(rawUsername);
-
-  console.log(decodedUsername);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -59,6 +58,21 @@ function User() {
       setIsSubmitting(false);
     }
   };
+  const handleSuggestions = async () => {
+    setIsSuggesting(true);
+    try {
+      const res = await axios.post("/api/suggest-messages");
+      // Extract only the questions from the response
+      const questionsArray = res.data.reply.split("||");
+
+      setSuggestedMessage(questionsArray);
+      console.log(questionsArray);
+    } catch (error) {
+      console.log("Error while fetching suggested messages");
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
 
   return (
     <div>
@@ -81,6 +95,22 @@ function User() {
           </Button>
         </form>
       </Form>
+      <Button onClick={handleSuggestions} disabled={isSuggesting}>
+        Suggest Message
+      </Button>
+
+      <div>
+        {suggestedMessage.length !== 0 &&
+          suggestedMessage.map((message, idx) => (
+            <p
+              onClick={(e) => console.log(e.currentTarget.textContent)}
+              className="border-2 border-black cursor-pointer"
+              key={idx}
+            >
+              {message}
+            </p>
+          ))}
+      </div>
     </div>
   );
 }
