@@ -5,6 +5,8 @@ import { Message } from "@/model/User";
 export async function POST(request: Request) {
   await dbConnect();
   const { username, content } = await request.json();
+  console.log(username);
+
   try {
     const user = await UserModel.findOne({ username });
 
@@ -38,7 +40,7 @@ export async function POST(request: Request) {
         success: true,
         message: "Message sent successfully",
       },
-      { status: 500 }
+      { status: 200 }
     );
   } catch (error) {
     console.log("error adding messages", error);

@@ -38,7 +38,7 @@ function DashBoard() {
     setIsSwitchLoading(true);
     try {
       const res = await axios.get<ApiResponse>("/api/accept-messages");
-      console.log("fetchAcceptMessage", res.data.message);
+      console.log("fetchAcceptMessage", res.data.isAcceptingMessage);
 
       setValue("acceptMessages", res.data.isAcceptingMessage ?? false);
     } catch (error) {
@@ -57,6 +57,8 @@ function DashBoard() {
       try {
         const res = await axios.get<ApiResponse>("/api/get-messages");
         setMessages(res?.data?.messages || []);
+        console.log("Message here ", res);
+
         if (refresh) {
           toast.success("Showing Refrehsed Messages");
         }
@@ -80,9 +82,11 @@ function DashBoard() {
 
   //handle switch change
   const handleSwitchChange = async () => {
+    console.log("handle Switch ", !acceptMessages);
+
     try {
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
-        acceptMessage: !acceptMessages,
+        acceptMessages: !acceptMessages,
       });
       setValue("acceptMessages", !acceptMessages);
       toast(response.data.message);
@@ -128,7 +132,9 @@ function DashBoard() {
             disabled
             className="input input-bordered w-full p-2 mr-2"
           />
-          <Button onClick={copyToClipboard}>Copy</Button>
+          <Button className="cursor-pointer" onClick={copyToClipboard}>
+            Copy
+          </Button>
         </div>
       </div>
 
