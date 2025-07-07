@@ -35,6 +35,13 @@ function User() {
     },
   });
 
+  const { watch, setValue } = form;
+  const selectedMessage = watch("content");
+
+  const handleSelect = (str) => {
+    setValue("content", str);
+  };
+
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsSubmitting(true);
     try {
@@ -56,6 +63,7 @@ function User() {
       console.log(error);
     } finally {
       setIsSubmitting(false);
+      setValue("content", "");
     }
   };
   const handleSuggestions = async () => {
@@ -103,7 +111,7 @@ function User() {
         {suggestedMessage.length !== 0 &&
           suggestedMessage.map((message, idx) => (
             <p
-              onClick={(e) => console.log(e.currentTarget.textContent)}
+              onClick={(e) => handleSelect(e.currentTarget.textContent)}
               className="border-2 border-black cursor-pointer"
               key={idx}
             >
