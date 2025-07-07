@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -17,6 +18,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ApiResponse } from "@/types/ApiResponse";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 function User() {
   const [IsSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +44,7 @@ function User() {
   const { watch, setValue } = form;
   const selectedMessage = watch("content");
 
-  const handleSelect = (str) => {
+  const handleSelect = (str: string) => {
     setValue("content", str);
   };
 
@@ -83,41 +89,120 @@ function User() {
   };
 
   return (
-    <div>
+    // <div>
+    //   <Form {...form}>
+    //     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    //       <FormField
+    //         name="content"
+    //         control={form.control}
+    //         render={({ field }) => (
+    //           <FormItem>
+    //             <FormLabel>Write Your Message</FormLabel>
+    //             <Input {...field} />
+    //             <FormMessage />
+    //           </FormItem>
+    //         )}
+    //       />
+
+    //       <Button className="w-full" type="submit" disabled={IsSubmitting}>
+    //         Send
+    //       </Button>
+    //     </form>
+    //   </Form>
+    //   <Button onClick={handleSuggestions} disabled={isSuggesting}>
+    //     Suggest Message
+    //   </Button>
+
+    //   <div>
+    //     {suggestedMessage.length !== 0 &&
+    //       suggestedMessage.map((message, idx) => (
+    //         <Button
+    //           disabled={isSuggesting}
+    //           onClick={(e) => handleSelect(e.currentTarget.textContent)}
+    //           className="border-2 border-black cursor-pointer"
+    //           key={idx}
+    //         >
+    //           {message}
+    //         </Button>
+    //       ))}
+    //   </div>
+    // </div>
+
+    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
+      <h1 className="text-4xl font-bold mb-6 text-center">
+        Public Profile Link
+      </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
-            name="content"
             control={form.control}
+            name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Write Your Message</FormLabel>
-                <Input {...field} />
+                <FormLabel>
+                  Send Anonymous Message to @{decodedUsername}
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Write your anonymous message here"
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <Button className="w-full" type="submit" disabled={IsSubmitting}>
-            Send
-          </Button>
+          <div className="flex justify-center">
+            {IsSubmitting ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            ) : (
+              <Button type="submit" disabled={IsSubmitting}>
+                Send It
+              </Button>
+            )}
+          </div>
         </form>
       </Form>
-      <Button onClick={handleSuggestions} disabled={isSuggesting}>
-        Suggest Message
-      </Button>
 
-      <div>
-        {suggestedMessage.length !== 0 &&
-          suggestedMessage.map((message, idx) => (
-            <p
-              onClick={(e) => handleSelect(e.currentTarget.textContent)}
-              className="border-2 border-black cursor-pointer"
-              key={idx}
-            >
-              {message}
-            </p>
-          ))}
+      <div className="space-y-4 my-8">
+        <div className="space-y-2">
+          <Button
+            onClick={handleSuggestions}
+            className="my-4"
+            disabled={isSuggesting}
+          >
+            Suggest Messages
+          </Button>
+          <p>Click on any message below to select it.</p>
+        </div>
+        <Card>
+          <CardHeader>
+            <h3 className="text-xl font-semibold">Messages</h3>
+          </CardHeader>
+          <CardContent className="flex flex-col space-y-4">
+            {suggestedMessage.map((message, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="mb-2"
+                onClick={() => handleSelect(message)}
+              >
+                {message}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+      <Separator className="my-6" />
+      <div className="text-center">
+        <div className="mb-4">Get Your Message Board</div>
+        <Link href={"/sign-up"}>
+          <Button>Create Your Account</Button>
+        </Link>
       </div>
     </div>
   );
