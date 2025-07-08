@@ -80,7 +80,6 @@ function User() {
       const questionsArray = res.data.reply.split("||");
 
       setSuggestedMessage(questionsArray);
-      console.log(questionsArray);
     } catch (error) {
       console.log("Error while fetching suggested messages");
     } finally {
@@ -177,25 +176,34 @@ function User() {
           >
             Suggest Messages
           </Button>
-          <p>Click on any message below to select it.</p>
         </div>
-        <Card>
-          <CardHeader>
-            <h3 className="text-xl font-semibold">Messages</h3>
-          </CardHeader>
-          <CardContent className="flex flex-col space-y-4">
-            {suggestedMessage.map((message, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="mb-2"
-                onClick={() => handleSelect(message)}
-              >
-                {message}
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
+        {suggestedMessage.length === 0 ? (
+          <p className="text-muted-foreground">
+            No suggestions yet. Click above to generate some!
+          </p>
+        ) : (
+          <>
+            <p>Click on any message below to select it.</p>
+
+            <Card>
+              <CardHeader>
+                <h3 className="text-xl font-semibold">Messages</h3>
+              </CardHeader>
+              <CardContent className="flex flex-col space-y-4">
+                {suggestedMessage.map((message, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    className="mb-2"
+                    onClick={() => handleSelect(message)}
+                  >
+                    {message}
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
       <Separator className="my-6" />
       <div className="text-center">
