@@ -4,11 +4,9 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { NextRequest } from "next/server";
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { messageId: string } }
-) {
-  const messageId = params.messageId;
+export async function DELETE(request: NextRequest) {
+  const url = new URL(request.url);
+  const messageId = url.pathname.split("/").pop(); // or use regex/pathname parser
 
   await dbConnect();
   const session = await getServerSession(authOptions);
@@ -18,18 +16,19 @@ export async function DELETE(
     return Response.json(
       {
         success: false,
-        message: "Not Authenticated ",
+        message: "Not Authenticated",
       },
       { status: 401 }
     );
   }
+
   try {
     const updatedResult = await UserModel.updateOne(
       { _id: user._id },
       { $pull: { messages: { _id: messageId } } }
     );
 
-    if (updatedResult.modifiedCount == 0) {
+    if (updatedResult.modifiedCount === 0) {
       return Response.json(
         {
           success: false,
@@ -47,7 +46,7 @@ export async function DELETE(
       { status: 201 }
     );
   } catch (error) {
-    console.log("error while deleting message", error);
+    console.error("error while deleting message", error);
     return Response.json(
       {
         success: false,
