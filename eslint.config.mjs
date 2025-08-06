@@ -15,8 +15,15 @@ const eslintConfig = [
   // Add this block to override specific rules
   {
     files: ["**/*.ts", "**/*.tsx"],
+
     rules: {
-      "@typescript-eslint/no-explicit-any": "off", // disable warning for 'any'
+      rules: {
+        "no-unused-vars": "off", // disables unused variable warnings
+        "no-unused-imports": "off", // disables unused import warnings (if using a plugin)
+        "unused-imports/no-unused-imports": "off", // if using 'eslint-plugin-unused-imports'
+        "unused-imports/no-unused-vars": "off", // disables unused vars from that plugin too
+        "@typescript-eslint/no-explicit-any": "off", // disable warning for 'any'
+      },
     },
   },
 ];
