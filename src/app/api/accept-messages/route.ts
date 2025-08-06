@@ -61,6 +61,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   // Connect to the database
+  console.log(request);
   await dbConnect();
 
   // Get the user session
