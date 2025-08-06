@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { messageSchema } from "@/schemas/messageSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
@@ -26,7 +25,7 @@ import Link from "next/link";
 
 function User() {
   const [IsSubmitting, setIsSubmitting] = useState(false);
-  const [isAccepting, setIsAccepting] = useState(false);
+  // const [isAccepting, setIsAccepting] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestedMessage, setSuggestedMessage] = useState([]);
   // Make sure that is the legit way of extracting user and decoding it ?
@@ -43,6 +42,7 @@ function User() {
 
   const { watch, setValue } = form;
   const selectedMessage = watch("content");
+  console.log(selectedMessage);
 
   const handleSelect = (str: string) => {
     setValue("content", str);
@@ -81,7 +81,7 @@ function User() {
 
       setSuggestedMessage(questionsArray);
     } catch (error) {
-      console.log("Error while fetching suggested messages");
+      console.log("Error while fetching suggested messages", error);
     } finally {
       setIsSuggesting(false);
     }

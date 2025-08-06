@@ -37,6 +37,8 @@ function VerifyAccount() {
         code: data.code,
       });
 
+      console.log(res);
+
       toast.success("code verified.");
 
       router.replace("/sign-in");
