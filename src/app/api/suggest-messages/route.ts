@@ -11,6 +11,7 @@ const groq = new Groq({
 
 export async function POST(req: Request) {
   const prompt = `Output only a single line string containing exactly three open-ended and engaging questions, separated by '||'. Do not include any explanation, prefixes, or formatting — just the questions. These should be universal, friendly, and suitable for anonymous social messaging (like Qooh.me). Avoid sensitive topics. Example format: What inspires you most in life?||What's a small win you recently celebrated?||If you could relive one day, which would it be and why?`;
+  console.log(req);
 
   try {
     const response = await groq.chat.completions.create({
@@ -26,24 +27,36 @@ export async function POST(req: Request) {
     }
     reply = reply || "No response";
     return NextResponse.json({ success: true, reply });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error from Groq:", error);
 
-    if (error.response) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      typeof (error as { response?: { status?: number; statusText?: string } })
+        .response === "object"
+    ) {
+      const response = (
+        error as { response: { status: number; statusText: string } }
+      ).response;
       return NextResponse.json(
         {
           success: false,
-          message: error.response.statusText,
-          status: error.response.status,
+          message: response.statusText,
+          status: response.status,
         },
-        { status: error.response.status }
+        { status: response.status }
       );
     }
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Something went wrong",
+        message:
+          typeof error === "object" && error !== null && "message" in error
+            ? (error as { message?: string }).message
+            : "Something went wrong",
       },
       { status: 500 }
     );
