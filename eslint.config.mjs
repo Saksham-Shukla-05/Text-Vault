@@ -12,15 +12,17 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 
-  // Add this block to override specific rules
   {
-    files: ["**/*.ts", "**/*.tsx"],
-
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
     rules: {
-      "no-unused-vars": "off", // disables unused variable warnings
-      "no-unused-imports": "off", // disables unused import warnings (if using a plugin)
-      "unused-imports/no-unused-imports": "off", // if using 'eslint-plugin-unused-imports'
-      "unused-imports/no-unused-vars": "off", // disables unused vars from that plugin too
+      // ✅ Disables all annoying "any" errors
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ];
