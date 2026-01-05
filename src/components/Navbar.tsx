@@ -5,18 +5,18 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "./ui/button";
 import { User } from "next-auth";
 import * as React from "react";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import { Moon, Sun } from "lucide-react";
+// import { useTheme } from "next-themes";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 function Navbar() {
   const { data: session } = useSession();
   const user: User = session?.user;
-  const { setTheme } = useTheme();
+  // const { setTheme } = useTheme();
   return (
     <nav className="p-4 md:p-6 bg-[#0F0F0F]  shadow-md text-white">
       <div className="container mx-auto flex flex-row justify-between items-center">
@@ -45,7 +45,7 @@ function Navbar() {
           </Link>
         )}
       </div>
-      <DropdownMenu>
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
             <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
@@ -64,7 +64,7 @@ function Navbar() {
             System
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
     </nav>
   );
 }
