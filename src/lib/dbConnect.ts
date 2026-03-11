@@ -12,14 +12,19 @@ async function dbConnect(): Promise<void> {
     return;
   }
 
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI is not defined in environment variables");
+  }
+
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI || "", {}); // FEW OPTIONS STUDY THEM
+    const db = await mongoose.connect(process.env.MONGO_URI);
+
     connection.isConnected = db.connections[0].readyState;
 
-    console.log("db connected Successfuly");
+    console.log("DB connected successfully");
   } catch (error) {
-    console.log("db connection failed", error);
-    process.exit(1);
+    console.error("DB connection failed:", error);
+    throw error; // ❗ don't use process.exit in Next.js
   }
 }
 
