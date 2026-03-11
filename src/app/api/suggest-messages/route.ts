@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
+      model: "openai/gpt-oss-20b",
       messages: [{ role: "user", content: prompt }],
       stream: true, // You can toggle this to true for streaming
     });
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
           message: response.statusText,
           status: response.status,
         },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
             ? (error as { message?: string }).message
             : "Something went wrong",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
