@@ -3,6 +3,7 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { User } from "next-auth";
+import { AcceptMessageSchema } from "@/schemas/AcceptMessageSchemas";
 
 export async function POST(request: Request) {
   // Connect to the database
@@ -18,9 +19,15 @@ export async function POST(request: Request) {
   }
 
   const userId = user._id;
-  const { acceptMessages } = await request.json();
-
-  console.log("Accept Message here in the server ", acceptMessages);
+  const body = await request.json();
+  const parsed = AcceptMessageSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json(
+      { success: false, message: "Invalid input" },
+      { status: 400 }
+    );
+  }
+  const { acceptMessages } = parsed.data;
 
   try {
     // Update the user's message acceptance status
@@ -59,9 +66,8 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   // Connect to the database
-  console.log(request);
   await dbConnect();
 
   // Get the user session

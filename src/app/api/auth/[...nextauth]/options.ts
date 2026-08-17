@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
+import { rateLimit } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/getClientIp";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +15,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials: any, req): Promise<any> {
+        const ip = getClientIp(req?.headers);
+        const rl = rateLimit(`login:${ip}`, 5, 15 * 60 * 1000);
+        if (!rl.success) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
+
         await dbConnect();
         try {
           const user = await UserModel.findOne({
@@ -23,7 +31,7 @@ export const authOptions: NextAuthOptions = {
             ],
           });
           if (!user) {
-            throw new Error("No user found with this email");
+            throw new Error("Invalid email or password");
           }
           if (!user.isVerified) {
             throw new Error("Please verify your account before logging in");
@@ -35,10 +43,10 @@ export const authOptions: NextAuthOptions = {
           if (isPasswordCorrect) {
             return user;
           } else {
-            throw new Error("Incorrect password");
+            throw new Error("Invalid email or password");
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw err;
         }
       },
     }),

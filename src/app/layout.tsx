@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -22,13 +16,11 @@ export const metadata: Metadata = {
     template: "%s | Text Vault",
   },
   description:
-    "Send and receive truly anonymous messages. No signup needed to send, end-to-end encrypted, zero logs. Say anything — no traces left behind.",
+    "Get honest, anonymous messages from friends and followers. Share your link, no account needed to send.",
   keywords: [
     "anonymous messaging",
-    "secret messages",
-    "anonymous text",
-    "private confessions",
-    "no trace chat",
+    "anonymous questions",
+    "anonymous feedback",
     "send anonymous message",
   ],
   authors: [{ name: "Text Vault" }],
@@ -36,9 +28,9 @@ export const metadata: Metadata = {
 
   // Open Graph (for Facebook, Discord, LinkedIn, WhatsApp previews, etc.)
   openGraph: {
-    title: "Text Vault – Truly Anonymous Messaging",
+    title: "Text Vault – Anonymous Messages",
     description:
-      "Whisper secrets, ask honest questions, or share thoughts completely anonymously. No accounts required to send messages.",
+      "Get honest, anonymous messages from friends and followers. Share your link, no account needed to send.",
     url: "https://text-vault-5vka.vercel.app",
     siteName: "Text Vault",
     images: [
@@ -94,8 +86,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-
-  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -104,24 +94,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        <meta name="theme-color" content="#0f172a" />
-        <meta name="msapplication-TileColor" content="#0f172a" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider>
-          {" "}
-          {/* ← wrap here */}
-          <AuthProvider>
-            {" "}
-            {/* if you still need it */}
-            {children}
-            <Toaster />
-          </AuthProvider>
-        </ThemeProvider>
+      <body className={`${geistSans.variable} antialiased`}>
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

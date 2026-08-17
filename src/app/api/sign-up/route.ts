@@ -3,12 +3,35 @@ import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import bcrypt from "bcryptjs";
+import { signUpSchema } from "@/schemas/signUpSchemas";
+import { rateLimit } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/getClientIp";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request.headers);
+  const rl = rateLimit(`sign-up:${ip}`, 3, 60 * 60 * 1000);
+  if (!rl.success) {
+    return Response.json(
+      { success: false, message: "Too many sign-up attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   await dbConnect();
 
   try {
-    const { username, email, password } = await request.json();
+    const body = await request.json();
+    const parsed = signUpSchema.safeParse(body);
+    if (!parsed.success) {
+      return Response.json(
+        {
+          success: false,
+          message: parsed.error.issues[0]?.message ?? "Invalid input",
+        },
+        { status: 400 }
+      );
+    }
+    const { username, email, password } = parsed.data;
 
     const existingVerifiedUserByUsername = await UserModel.findOne({
       username,
@@ -33,7 +56,7 @@ export async function POST(request: Request) {
         return Response.json(
           {
             success: false,
-            message: "User already exists with this email",
+            message: "Unable to register with the provided details",
           },
           { status: 400 }
         );

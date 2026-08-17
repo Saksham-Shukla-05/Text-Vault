@@ -1,11 +1,40 @@
+import { z } from "zod";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { Message } from "@/model/User";
+import { messageSchema } from "@/schemas/messageSchema";
+import { rateLimit } from "@/lib/rateLimit";
+import { getClientIp } from "@/lib/getClientIp";
+
+const sendMessageRequestSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  content: messageSchema.shape.content,
+});
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request.headers);
+  const rl = rateLimit(`send-message:${ip}`, 20, 10 * 60 * 1000);
+  if (!rl.success) {
+    return Response.json(
+      { success: false, message: "Too many messages sent. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   await dbConnect();
-  const { username, content } = await request.json();
-  console.log(username);
+
+  const body = await request.json();
+  const parsed = sendMessageRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json(
+      {
+        success: false,
+        message: parsed.error.issues[0]?.message ?? "Invalid input",
+      },
+      { status: 400 }
+    );
+  }
+  const { username, content } = parsed.data;
 
   try {
     const user = await UserModel.findOne({ username });
